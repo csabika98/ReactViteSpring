@@ -1,5 +1,9 @@
 ﻿# ReactViteSpring
 
+## Screenshots
+![](screenshots/1.png)
+![](screenshots/2.png)
+
 ## Installation
 * use the installation script, install.ps1 (you will need to run as administrator)
 ```
