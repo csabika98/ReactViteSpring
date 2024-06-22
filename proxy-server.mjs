@@ -25,8 +25,8 @@ function findProjectRoot(currentDir, targetFolderName) {
     return null; 
 }
 
-const projectRoot = findProjectRoot(__dirname, 'reactivite');
-const javaProjectPath = path.join(projectRoot, 'reactivite');
+const projectRoot = findProjectRoot(__dirname, 'ReactViteSpring');
+const javaProjectPath = path.join(projectRoot, 'ReactViteSpring');
 console.log(`Building Java project at path: ${javaProjectPath}`);
 
 let javaProcess;
@@ -99,7 +99,7 @@ app.use('/api/', createProxyMiddleware({
 app.use('/', createProxyMiddleware({
     target: 'http://localhost:5173/', 
     changeOrigin: true,
-    ws: true 
+    ws: false 
 }));
 
 const PORT = 8888;
