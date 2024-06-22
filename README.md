@@ -12,6 +12,8 @@ http://localhost:8888/api -> SPRING BACKEND
 ```
 
 ## Installation
+## Installation script works only on Windows
+
 * use the installation script, install.ps1 (you will need to run as administrator)
 ```
 powershell -ExecutionPolicy ByPass -File .\install.ps1
