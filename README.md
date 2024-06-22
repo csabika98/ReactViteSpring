@@ -4,6 +4,13 @@
 ![](screenshots/1.png)
 ![](screenshots/2.png)
 
+## PROXY SERVER INCLUDED
+
+```
+http://localhost:8888 -> REACT + VITE
+http://localhost:8888/api -> SPRING BACKEND
+```
+
 ## Installation
 * use the installation script, install.ps1 (you will need to run as administrator)
 ```
