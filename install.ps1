@@ -26,7 +26,8 @@ if (!(Get-Command 'scoop' -ErrorAction SilentlyContinue))
 
 scoop bucket add java
 scoop bucket add main 
-
+# Adding Node.js LTS 20 installation
+scoop install nodejs-lts
 
 if (!(scoop list | Select-String "temurin22-jdk"))
 {
