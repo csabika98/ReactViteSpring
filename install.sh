@@ -1,6 +1,5 @@
 #!/bin/bash
 
-
 sudo apt-get install -y curl software-properties-common apt-transport-https wget
 
 # Installing Java 22
@@ -9,19 +8,29 @@ echo "deb https://packages.adoptium.net/artifactory/deb $(awk -F= '/^VERSION_COD
 sudo apt update
 sudo apt install -y temurin-22-jdk
 
-# Prompt message
-echo "We are detecting if Node Version Manager (NVM) is installed on your system."
+# Define base directories to check
+if [ -n "$CODESPACES" ]; then
+    # GitHub Codespaces environment
+    BASE_DIR="/home/codespace"
+elif [ -n "$HOME" ]; then
+    # Local environment or other standard Unix-like systems
+    BASE_DIR="$HOME"
+else
+    # Fallback if neither $CODESPACES nor $HOME is defined
+    BASE_DIR="/home/$USER"
+fi
 
-# Check if NVM is installed
-if command -v nvm &> /dev/null; then
+# Check if NVM is installed or if directories ~/.nvm or ~/nvm exist using find
+if command -v nvm &> /dev/null || find "$BASE_DIR/nvm" -mindepth 1 -maxdepth 1 -print -quit || find "$BASE_DIR/.nvm" -mindepth 1 -maxdepth 1 -print -quit; then
     echo "Node Version Manager (NVM) found on your system."
-    echo "We are about to remove NVM from your system. As it can cause a conflict with our Node.js installation."
+    echo "We are about to remove NVM from your system as it can cause conflicts with our Node.js installation."
     echo "Please note that this will remove NVM and all its installed versions of Node.js."
-    echo "We are going to install npm install -g n instead of nvm."
-    echo "If you are not agree with this, please type 'no' to cancel the operation."
-    
+    echo "We are going to install 'n' (a Node.js version management tool) instead of NVM."
+    echo "If you do not agree with this, please type 'no' to cancel the operation."
+
     # Ask for confirmation
     read -p "If you agree, type 'yes' to continue: " confirmation
+    
 
     # Check user confirmation
     if [ "$confirmation" == "yes" ]; then
