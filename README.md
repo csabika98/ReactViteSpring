@@ -1,5 +1,12 @@
 ﻿# ReactViteSpring
 
+
+## TO INSTALL IT ON LINUX
+```
+sudo apt-get install make
+make -f install.mk
+```
+
 ## Screenshots
 ![](screenshots/1.png)
 ![](screenshots/2.png)
