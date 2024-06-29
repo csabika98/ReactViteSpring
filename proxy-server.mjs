@@ -8,21 +8,19 @@ import fs from 'fs';
 
 const app = express();
 
-
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-
 
 function findProjectRoot(currentDir, targetFolderName) {
     const root = path.parse(currentDir).root;
     while (currentDir !== root) {
         let possiblePath = path.join(currentDir, targetFolderName);
         if (fs.existsSync(possiblePath)) {
-            return currentDir; 
+            return currentDir;
         }
         currentDir = path.dirname(currentDir);
     }
-    return null; 
+    return null;
 }
 
 const projectRoot = findProjectRoot(__dirname, 'ReactViteSpring');
@@ -31,25 +29,32 @@ console.log(`Building Java project at path: ${javaProjectPath}`);
 
 let javaProcess;
 
-const userHome = process.env.USERPROFILE;
-const mvnCommand = path.join(userHome, 'scoop', 'apps', 'maven', 'current', 'bin', 'mvn.cmd');
+// Determine Maven command based on OS
+let mvnCommand;
+if (process.platform === 'win32') {
+    const userHome = process.env.USERPROFILE;
+    mvnCommand = path.join(userHome, 'scoop', 'apps', 'maven', 'current', 'bin', 'mvn.cmd');
+} else if (process.platform === 'linux' || process.platform === 'darwin') {
+    // For Linux and macOS, assume 'mvn' is in PATH
+    mvnCommand = 'mvn';
+} else {
+    console.error(`Unsupported platform: ${process.platform}`);
+    process.exit(1);
+}
 
 const runJavaApp = () => {
     if (javaProcess) {
         console.log('Stopping existing Java application...');
-        javaProcess.kill(); 
+        javaProcess.kill();
         javaProcess = null;
     }
     console.log('Starting Java application...');
+    console.log('Using Maven at:', mvnCommand);
+    console.log('Executing command:', mvnCommand, ['spring-boot:run', '-f', path.join(javaProjectPath, 'pom.xml')]);
 
-    
-    const mvnPath = path.join(userHome, 'scoop', 'apps', 'maven', 'current', 'bin', 'mvn.cmd');
-    console.log('Using Maven at:', mvnPath);
-    console.log('Executing command:', mvnPath, ['spring-boot:run', '-f', path.join(javaProjectPath, 'pom.xml')]);
-
-    javaProcess = spawn(mvnPath, ['spring-boot:run', '-f', path.join(javaProjectPath, 'pom.xml')], {
+    javaProcess = spawn(mvnCommand, ['spring-boot:run', '-f', path.join(javaProjectPath, 'pom.xml')], {
         stdio: 'inherit',
-        shell: true 
+        shell: true
     });
 
     javaProcess.on('error', (err) => {
@@ -61,12 +66,11 @@ const runJavaApp = () => {
     });
 };
 
-
 const buildAndStartJava = () => {
     console.log(`Building Java project at path: ${javaProjectPath}`);
     const mvnBuild = spawn(mvnCommand, ['clean', 'install', '-f', path.join(javaProjectPath, 'pom.xml')], {
-        stdio: 'inherit', 
-        shell: true 
+        stdio: 'inherit',
+        shell: true
     });
 
     mvnBuild.on('close', (code) => {
@@ -79,27 +83,23 @@ const buildAndStartJava = () => {
     });
 };
 
-
 buildAndStartJava();
-
 
 app.use((req, res, next) => {
     console.log(`Request received: ${req.method} ${req.url}`);
     next();
 });
 
-
 app.use('/api/', createProxyMiddleware({
-    target: 'http://localhost:8080/', 
+    target: 'http://localhost:8080/',
     changeOrigin: true,
     ws: true
 }));
 
-
 app.use('/', createProxyMiddleware({
-    target: 'http://localhost:5173/', 
+    target: 'http://localhost:5173/',
     changeOrigin: true,
-    ws: false 
+    ws: false
 }));
 
 const PORT = 8888;
@@ -113,6 +113,7 @@ process.on('exit', () => {
         javaProcess.kill();
     }
 });
+
 
 
 

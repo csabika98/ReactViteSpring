@@ -8,6 +8,17 @@ echo "deb https://packages.adoptium.net/artifactory/deb $(awk -F= '/^VERSION_COD
 sudo apt update
 sudo apt install -y temurin-22-jdk
 
+
+# install maven
+curl -s "https://get.sdkman.io" | bash
+source "$HOME/.sdkman/bin/sdkman-init.sh"
+
+sdk install maven
+
+mvn -version
+
+
+
 # Define base directories to check
 if [ -n "$CODESPACES" ]; then
     # GitHub Codespaces environment
